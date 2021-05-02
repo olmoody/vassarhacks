@@ -49,9 +49,20 @@ struct Actuals: Decodable {
     let vaccinationsCompleted: Int
 }
 
-
-
 struct ContentView: View {
+    var body: some View {
+        NavigationView{
+            VStack{
+                Text("VidView").font(.system(size: 35, weight: .bold, design: .default )).padding()
+                Image("Image").padding()
+            NavigationLink(destination: ContentViewMenu()) {
+                Text("Menu").font(.system(size: 35, weight: .bold, design: .default ))
+            }
+            }
+        }.navigationBarTitle("Home")
+    }}
+
+struct ContentViewMenu: View {
     var body: some View {
         NavigationView{
             List{
