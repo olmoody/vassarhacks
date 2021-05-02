@@ -49,9 +49,20 @@ struct ContentView: View {
             VStack{
                 Text("VidView").font(.system(size: 35, weight: .bold, design: .default )).padding()
                 Image("Image").padding()
+<<<<<<< HEAD
                 NavigationLink(destination: ContentViewMenu()) { Text("Menu").font(.system(size: 35, weight: .bold, design: .default )) } }
             
         }.navigationBarTitle("Home") }}
+=======
+            NavigationLink(destination: ContentViewMenu()) {
+                Text("Menu").font(.system(size: 35, weight: .bold, design: .default ))
+            }
+            }
+        }.navigationBarTitle("Home")
+    }
+    
+}
+>>>>>>> 9250b85a2345d1b222a9a1c0c89bbb146822f2d4
 
 struct ContentViewy: View {
     @State private var image: Image?
