@@ -6,12 +6,193 @@
 //
 
 import SwiftUI
+import Foundation
+struct User: Decodable {
+    //var id: ObjectIdentifier
+    
+    let id = UUID()
+    var actuals = Actuals(vaccinationsCompleted: 0)
+    
+    let population: Int
+    let country : String
+
+}
+class apiCall {
+    func getUsers(completion:@escaping (Newss) -> ()) {
+        guard let url = URL(string: "https://vaccovid-coronavirus-vaccine-and-treatment-tracker.p.rapidapi.com/api/news/get-vaccine-news/0") else { return }
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        // Set HTTP Request Header
+        request.setValue("vaccovid-coronavirus-vaccine-and-treatment-tracker.p.rapidapi.com", forHTTPHeaderField: "x-rapidapi-host")
+        request.setValue("6944bf73bcmsh49a3a4b0a39ed55p1f9f96jsna86e2030fe49", forHTTPHeaderField: "x-rapidapi-key")
+        URLSession.shared.dataTask(with: request) { (data, _, _) in
+            let users = try! JSONDecoder().decode(Newss.self, from: data!)
+            print(users)
+            
+            DispatchQueue.main.async {
+                completion(users)
+            }
+        }
+        .resume()
+    }
+}
+struct Newss: Decodable {
+    var news : [NewsItem]
+}
+struct NewsItem: Codable,Identifiable {
+    let id = UUID()
+    var title : String
+    var link : String
+}
+struct Actuals: Decodable {
+    let vaccinationsCompleted: Int
+}
+//struct apiCall {
+//    var state:String
+//    func getUsers(completion:@escaping (User) -> ()) {
+//        print("hello")
+//        let urlstring = "https://api.covidactnow.org/v2/state/\(state).json?apiKey=837f0235c0024bc3995d4323c5f215b5"
+//        guard let url = URL(string: urlstring) else { return }
+//        URLSession.shared.dataTask(with: url) { (data, _, _) in
+//            do {
+//                      if let convertedJsonIntoDict = try JSONSerialization.jsonObject(with: data!, options: []) as? NSDictionary {
+//
+//                           // Print out entire dictionary
+//                           print(convertedJsonIntoDict)
+//
+//                           // Get value by key
+//                           let userId = convertedJsonIntoDict["userId"]
+//                           print(userId ?? "userId could not be read")
+//
+//                       }
+//            } catch let error as NSError {
+//                       print(error.localizedDescription)
+//             }
+//        }
+//        .resume()
+//    }
+//}
+
 
 struct ContentView: View {
     var body: some View {
-        Text("Hello, world!")
-            .padding()
+        NavigationView{
+            List{
+                
+                NavigationLink(destination: StatsState()) {
+                    Text("Stats")
+                }
+                NavigationLink(destination: News()) {
+                    Text("News")
+                }
+               
+                    
+                        Button("Your Vaccine Report", action: showReport)
+                        Button("Book a Vaccine", action: bookVax)
+                        Button("Stat Dashboard", action: showStats)
+            }.navigationTitle("Menu")
+        }
     }
+                func showNews() {
+                    
+                }
+                func showReport(){}
+                func bookVax(){}
+                    
+                
+                
+                func showStats(){}
+                func showAL(){}
+                
+    
+}
+struct StatsState:View {
+    @State private var state : String? = nil
+    var body: some View {
+        List{
+            NavigationLink(destination: Stats(state:"MA")) {
+            Text("Massachusetts")
+            }
+            NavigationLink(destination: Stats(state:"NY")){
+                Text("New York")
+            }
+            NavigationLink(destination: Stats(state:"CA")){
+                Text("California")
+            }
+            NavigationLink(destination: Stats(state:"ND")){
+                Text("North Dakota")
+            }
+        
+        }
+    }
+}
+
+
+struct Stats: View {
+    @State var dic : User?
+    @State var pop : Double? = 0.0
+    //let a = apiCall(state:"MA");
+    var state = "MA"
+    //let dic = NSDictionary()
+    var body: some View {
+        NavigationView{
+            List {
+//                user in
+//
+                Text(String(self.pop ?? 0))
+                             //  .font(.headline)
+//                            Text(String(user.population))
+//                                .font(.subheadline)
+                     
+            }.onAppear {
+                let urlstring = "https://api.covidactnow.org/v2/state/\(state).json?apiKey=837f0235c0024bc3995d4323c5f215b5"
+                guard let url = URL(string: urlstring) else { return }
+                
+
+                URLSession.shared.dataTask(with: url){ (data, _, _) in
+                      guard let data = data else { return }
+                      let movies = try! JSONDecoder().decode(User.self, from: data)
+                      DispatchQueue.main.async {
+                        self.pop = Double(movies.actuals.vaccinationsCompleted)/Double(movies.population)
+                      }
+                    }.resume()
+        
+    
+            }
+            
+        }
+    
+}
+}
+
+struct News: View {
+    @State var dic : String?
+    @State var pop : Newss?
+    //let a = apiCall(state:"MA");
+    var state = "MA"
+    //let dic = NSDictionary()
+    var body: some View {
+        NavigationView{
+            List(pop?.news ?? []) {
+                user in
+//
+                Link(user.title, destination: URL(string: user.link)!)
+                             //  .font(.headline)
+//                            Text(String(user.population))
+//                                .font(.subheadline)
+                     
+            }.onAppear {
+                
+                apiCall().getUsers {(users) in
+                    self.pop = users
+                    
+                }
+            
+            
+        }
+    
+}
+}
 }
 
 struct ContentView_Previews: PreviewProvider {
