@@ -60,7 +60,9 @@ struct ContentView: View {
             }
             }
         }.navigationBarTitle("Home")
-    }}
+    }
+    
+}
 
 struct ContentViewMenu: View {
     var body: some View {
