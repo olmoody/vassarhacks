@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Foundation
+
 struct User: Decodable {
     //var id: ObjectIdentifier
     
@@ -47,31 +48,7 @@ struct NewsItem: Codable,Identifiable {
 struct Actuals: Decodable {
     let vaccinationsCompleted: Int
 }
-//struct apiCall {
-//    var state:String
-//    func getUsers(completion:@escaping (User) -> ()) {
-//        print("hello")
-//        let urlstring = "https://api.covidactnow.org/v2/state/\(state).json?apiKey=837f0235c0024bc3995d4323c5f215b5"
-//        guard let url = URL(string: urlstring) else { return }
-//        URLSession.shared.dataTask(with: url) { (data, _, _) in
-//            do {
-//                      if let convertedJsonIntoDict = try JSONSerialization.jsonObject(with: data!, options: []) as? NSDictionary {
-//
-//                           // Print out entire dictionary
-//                           print(convertedJsonIntoDict)
-//
-//                           // Get value by key
-//                           let userId = convertedJsonIntoDict["userId"]
-//                           print(userId ?? "userId could not be read")
-//
-//                       }
-//            } catch let error as NSError {
-//                       print(error.localizedDescription)
-//             }
-//        }
-//        .resume()
-//    }
-//}
+
 
 
 struct ContentView: View {
@@ -81,15 +58,15 @@ struct ContentView: View {
                 
                 NavigationLink(destination: StatsState()) {
                     Text("Stats")
-                }
+                }.listRowBackground(Color.green)
                 NavigationLink(destination: News()) {
                     Text("News")
-                }
+                }.listRowBackground(Color.green)
                
                     
-                        Button("Your Vaccine Report", action: showReport)
-                        Button("Book a Vaccine", action: bookVax)
-                        Button("Stat Dashboard", action: showStats)
+                        Button("Your Vaccine Report", action: showReport).listRowBackground(Color.green)
+                        Button("Book a Vaccine", action: bookVax).listRowBackground(Color.green)
+                        Button("Stat Dashboard", action: showStats).listRowBackground(Color.green)
             }.navigationTitle("Menu")
         }
     }
@@ -107,23 +84,25 @@ struct ContentView: View {
     
 }
 struct StatsState:View {
-    @State private var state : String? = nil
+    //@State private var state : String? = nil
     var body: some View {
+        NavigationView{
         List{
             NavigationLink(destination: Stats(state:"MA")) {
-            Text("Massachusetts")
-            }
+                Text("Massachusetts")
+            }.listRowBackground(Color.green)
             NavigationLink(destination: Stats(state:"NY")){
                 Text("New York")
-            }
+            }.listRowBackground(Color.green)
             NavigationLink(destination: Stats(state:"CA")){
                 Text("California")
-            }
+            }.listRowBackground(Color.green)
             NavigationLink(destination: Stats(state:"ND")){
                 Text("North Dakota")
-            }
+            }.listRowBackground(Color.green)
         
         }
+    }.navigationTitle("Pick your state")
     }
 }
 
@@ -136,11 +115,9 @@ struct Stats: View {
     //let dic = NSDictionary()
     var body: some View {
         NavigationView{
-            List {
-//                user in
-//
-                Text(String(self.pop ?? 0))
-                             //  .font(.headline)
+            ZStack{
+                Color(UIColor.lightGray).edgesIgnoringSafeArea(.all)
+                Text("Percent of people vaccinated in \(state):  \(String(self.pop ?? 0))").font(.system(size: 35, weight: .bold, design: .default ))
 //                            Text(String(user.population))
 //                                .font(.subheadline)
                      
@@ -160,12 +137,15 @@ struct Stats: View {
     
             }
             
-        }
+        }.navigationTitle("Stats")
     
 }
 }
 
 struct News: View {
+    init() {
+        UITableView.appearance().backgroundColor = .lightGray
+        }
     @State var dic : String?
     @State var pop : Newss?
     //let a = apiCall(state:"MA");
@@ -176,7 +156,7 @@ struct News: View {
             List(pop?.news ?? []) {
                 user in
 //
-                Link(user.title, destination: URL(string: user.link)!)
+                Link(user.title, destination: URL(string: user.link)!).font(.system(size: 15, weight: .bold, design: .default )).foregroundColor(Color.green)
                              //  .font(.headline)
 //                            Text(String(user.population))
 //                                .font(.subheadline)
@@ -191,7 +171,7 @@ struct News: View {
             
         }
     
-}
+}.navigationTitle("Latest News")
 }
 }
 
